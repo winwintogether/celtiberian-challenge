@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Input, Button, Table, Dropdown, Space, Menu, Tag} from 'antd';
 import {PlusOutlined, DashOutlined} from '@ant-design/icons';
 import './Home.less';
 import {colors} from "@constants/general";
+import NewspaperDetailModal from "@components/Modal/NewspaperDetailModal";
 const { Search } = Input;
 type Props = {};
 
@@ -24,6 +25,14 @@ const data: INewspaper[] = [
 ]
 
 const Home: React.FC<Props> = () => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedNewspaper, setSelectedNewspaper] = useState<null | INewspaper>(null);
+
+  const viewNewspaper = (newspaper: INewspaper) => {
+    setModalOpen(true);
+    setSelectedNewspaper(newspaper);
+  }
   const columns = [
     {
       title: 'Image',
@@ -69,11 +78,11 @@ const Home: React.FC<Props> = () => {
       title: 'Action',
       dataIndex: '',
       width: '5%',
-      render: () => (
+      render: (_: any, newspaper: INewspaper) => (
         <Space size="middle">
           <Dropdown className="rotate-90 cursor-pointer" overlay={(
             <Menu>
-              <Menu.Item key="view">View Newspaper</Menu.Item>
+              <Menu.Item key="view" onClick={() => viewNewspaper(newspaper)}>View Newspaper</Menu.Item>
               <Menu.Item key="edit">Edit Newspaper</Menu.Item>
               <Menu.Item key="delete">Delete Newspaper</Menu.Item>
             </Menu>
@@ -96,6 +105,16 @@ const Home: React.FC<Props> = () => {
           </Button>
         </div>
         <Table className="newspaper-list" columns={columns} dataSource={data} rowKey={(record) => record.id} />
+
+        {
+          selectedNewspaper && (
+            <NewspaperDetailModal
+              isOpen={modalOpen}
+              onClose={() => setModalOpen(false)}
+              newspaper={selectedNewspaper}
+            />
+          )
+        }
       </div>
     </>
   );
