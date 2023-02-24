@@ -8,6 +8,9 @@
     "mocha": "nyc mocha --timeout=50000 --exit",
     "test": "NODE_ENV=test npm run fresh && NODE_ENV=test npm run mocha",
     "test:window": "set NODE_ENV=test&&npm run fresh&&npm run mocha",
+    "fresh": "npm run clean && npm run seed",
+    "clean": "node clean.js",
+    "seed": "node seed.js",
     "format": "prettier --write --config .prettierrc.json \"**/*.js\"",
     "lint": "eslint --fix --config .eslintrc.json \"**/*.js\"",
     "remark": "remark . -o"
