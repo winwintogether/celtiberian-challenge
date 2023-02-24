@@ -1,6 +1,4 @@
-# Testing Frontend
-
-## Features
+# Frontend
 
 - TypeScript language
 - LESS for styling
@@ -10,6 +8,8 @@
 - Ant Design as UI framework
 - React hooks
 
-### Run Project
+### How to run 
 
-1. Run `npm start`
+```
+npm run start
+```

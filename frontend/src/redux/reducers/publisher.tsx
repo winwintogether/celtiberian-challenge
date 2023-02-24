@@ -1,12 +1,12 @@
-import {PUBLISHER_LIST_SUCCESS} from "@redux/actions/publisher";
+import { PUBLISHER_LIST_SUCCESS } from '@redux/actions/publisher';
 
 export interface IPublisherStatus {
-  publishers: IPublisher[],
+  publishers: IPublisher[];
 }
 
 const initialState: IPublisherStatus = {
   publishers: []
-}
+};
 
 export default (state = initialState, actions: any) => {
   const { type, payload } = actions;

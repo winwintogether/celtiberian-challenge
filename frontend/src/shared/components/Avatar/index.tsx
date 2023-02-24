@@ -3,12 +3,12 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
 import { UploadChangeParam } from 'antd/es/upload';
 import { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
-import {baseURL} from "../../../config";
 
+import { baseURL } from '../../../config';
 
 type Props = {
   imageUrl?: string;
-  setImageUrl: (b: string) => void
+  setImageUrl: (b: string) => void;
 };
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
@@ -29,7 +29,7 @@ const beforeUpload = (file: RcFile) => {
   return isJpgOrPng && isLt2M;
 };
 
-const Avatar: React.FC<Props> = ({imageUrl, setImageUrl}) => {
+const Avatar: React.FC<Props> = ({ imageUrl, setImageUrl }) => {
   const [loading, setLoading] = useState(false);
 
   const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
@@ -39,7 +39,7 @@ const Avatar: React.FC<Props> = ({imageUrl, setImageUrl}) => {
     }
     if (info.file.status === 'done') {
       // Get this url from response in real world.
-      getBase64(info.file.originFileObj as RcFile, (url) => {
+      getBase64(info.file.originFileObj as RcFile, url => {
         setLoading(false);
         setImageUrl(url);
       });
@@ -64,7 +64,11 @@ const Avatar: React.FC<Props> = ({imageUrl, setImageUrl}) => {
         onChange={handleChange}
         action={`${baseURL}/upload/avatar`}
       >
-        {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%' }} /> : uploadButton}
+        {imageUrl ? (
+          <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%' }} />
+        ) : (
+          uploadButton
+        )}
       </Upload>
     </>
   );

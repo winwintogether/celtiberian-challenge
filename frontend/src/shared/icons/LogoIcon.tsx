@@ -3,7 +3,7 @@ import React from 'react';
 interface Props {
   fill?: string;
   size?: number;
-};
+}
 
 const LogoIcon = ({ fill = '#61DAFB', size = 32 }: Props) => (
   <svg

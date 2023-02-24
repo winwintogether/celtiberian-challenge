@@ -40,24 +40,16 @@ const bodyParseUrlencoded = {
   extended: true
 }
 
-// eslint-disable-next-line
-const sockets = new Map()
-
 module.exports = {
   env: process.env.NODE_ENV,
   port: process.env.PORT || 8080,
-  jwtSecret: process.env.JWT_SECRET,
-  jwtExpiration: process.env.JWT_EXPIRATION_IN_MINUTES,
   mongoUri:
     process.env.NODE_ENV !== 'test'
       ? process.env.MONGO_URI
       : process.env.MONGO_TEST_URI,
   frontendUrl: process.env.FRONTEND_URL,
-  sentryDSN: process.env.SENTRY_DSN ? process.env.SENTRY_DSN : false,
   limitUploadFileSize: process.env.LIMIT_UPLOAD_FILE_SIZE,
-  initialPassword: process.env.INITIAL_PASSWORD || '12345',
   corsOptions,
   bodyParseJson,
-  bodyParseUrlencoded,
-  sockets
+  bodyParseUrlencoded
 }

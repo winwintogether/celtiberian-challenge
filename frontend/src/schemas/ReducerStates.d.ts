@@ -1,5 +1,5 @@
-import {INewspapersStatus} from "@redux/reducers/newspaper";
-import {IPublisherStatus} from "@redux/reducers/publisher";
+import { INewspapersStatus } from "@redux/reducers/newspaper";
+import { IPublisherStatus } from "@redux/reducers/publisher";
 
 interface IReducerStates {
   newspapers: INewspapersStatus;

@@ -1,4 +1,4 @@
-## Test Backend
+## Backend
 
 ### Prerequisites
 - Node.js > 8.12
@@ -19,16 +19,22 @@ $ npm install
 
 - seed initial Data
 ```
-$ npm run fresh         // windows
+$ npm run fresh
 ```
 
-- dev development
+- dev environment
 
 ```
-$ npm run dev:window         // windows
+$ npm run dev
+```
+
+- prod environment
+
+```
+$ npm run start
 ```
 
 ### Testing Project
 ```
-npm run test:window
+npm run test
 ```

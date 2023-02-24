@@ -1,6 +1,10 @@
 import { takeLatest, call, put } from 'redux-saga/effects';
+import {
+  PUBLISHER_LIST_FAILURE,
+  PUBLISHER_LIST_REQUEST,
+  PUBLISHER_LIST_SUCCESS
+} from "@redux/actions/publisher";
 import * as API from '../api';
-import {PUBLISHER_LIST_FAILURE, PUBLISHER_LIST_REQUEST, PUBLISHER_LIST_SUCCESS} from "@redux/actions/publisher";
 
 export default function* publisherSaga(): Generator {
   yield takeLatest(PUBLISHER_LIST_REQUEST, getPublishers);
