@@ -2,10 +2,10 @@ import { FETCH_LIST_SUCCESS } from '../actions';
 
 type Props = {
   type: string;
-  payload: IItem[];
+  payload: INewspaper[];
 }
 
-const INITIAL_STATE: IItem[] = [];
+const INITIAL_STATE: INewspaper[] = [];
 
 export default (state = INITIAL_STATE, { type, payload }: Props) => {
   switch (type) {
