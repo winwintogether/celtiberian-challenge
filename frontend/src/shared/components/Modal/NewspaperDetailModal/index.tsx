@@ -3,6 +3,7 @@ import moment from 'moment';
 import { Modal, Tag } from 'antd';
 import { colors } from "@constants/general";
 import './styles.less';
+import Avatar from "@components/Avatar";
 
 type Props = {
   isOpen: boolean;
@@ -17,11 +18,12 @@ const NewspaperDetailModal: React.FC<Props> = ({isOpen, onClose, newspaper}) => 
         className="detail-modal"
         title={<h1 className="">{newspaper.title}</h1>}
         centered={true}
-        visible={isOpen}
+        open={isOpen}
         onCancel={() => onClose(false)}
-        onOk={() => onClose(false)}
+        footer={null}
         width={1000}
       >
+        <Avatar imageUrl={newspaper.image} setImageUrl={() => {}}/>
         <div className="mb-4">
           <h2>Abstract</h2>
           <div className="text-left">
@@ -30,10 +32,6 @@ const NewspaperDetailModal: React.FC<Props> = ({isOpen, onClose, newspaper}) => 
         </div>
         <table className="detail-table">
           <tbody>
-          <tr>
-            <td className="title">Id</td>
-            <td className="description">{newspaper.id}</td>
-          </tr>
           <tr>
             <td className="title">Link</td>
             <td className="description">

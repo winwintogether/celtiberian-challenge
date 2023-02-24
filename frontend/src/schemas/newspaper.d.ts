@@ -1,7 +1,8 @@
 interface INewspaper {
-  id: number;
+  _id: string;
   title: string;
   image: string;
+  publisherId: string;
   link: string;
   abstract: string;
   publisher: IPublisher;

@@ -5,7 +5,8 @@ import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
 
 import createRootReducer from './reducers';
-import sagas from './sagas';
+import newspaperSaga from "@redux/sagas/newspaper";
+import publisherSaga from "@redux/sagas/publisher";
 
 const history: History = createBrowserHistory();
 const sagaMiddleware = createSagaMiddleware();
@@ -13,7 +14,8 @@ const middleware = [routerMiddleware(history), thunk, sagaMiddleware];
 
 const store = createStore(createRootReducer(history), compose(applyMiddleware(...middleware)));
 
-sagaMiddleware.run(sagas);
+sagaMiddleware.run(publisherSaga);
+sagaMiddleware.run(newspaperSaga);
 
 export { history };
 

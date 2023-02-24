@@ -1,43 +1,78 @@
-import React, {useState} from 'react';
-import {Input, Button, Table, Dropdown, Space, Menu, Tag} from 'antd';
-import {PlusOutlined, DashOutlined} from '@ant-design/icons';
-import './Home.less';
+import React, {useEffect, useState} from 'react';
+import {Input, Button, Table, Dropdown, Space, Menu, Tag, Modal, Pagination} from 'antd';
+import {PlusOutlined, DashOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {colors} from "@constants/general";
 import NewspaperDetailModal from "@components/Modal/NewspaperDetailModal";
-const { Search } = Input;
-type Props = {};
+import NewspaperEditModal from "@components/Modal/NewspaperEditModal";
+import {useSelector, useDispatch} from "react-redux";
+import {deleteNewspaper, fetchList} from '@redux/actions';
+import {IReducerStates} from "../../schemas/ReducerStates";
+import './Home.less';
 
-const data: INewspaper[] = [
-  {
-    "id": 2,
-    "title": "Michigan City dispatch.",
-    "image": "public/image/michigan.png",
-    "link": "https://www.britannica.com/place/Michigan",
-    "abstract": "Michigan, constituent state of the United States of America. Although by the size of its land Michigan ranks only 22nd of the 50 states, the inclusion of the Great Lakes waters over which it has jurisdiction increases its area considerably, placing it 11th in terms of total area. The capital is Lansing, in south-central Michigan. The state's name is derived from michi-gama, an Ojibwa (Chippewa) word meaning 'large lake.'",
-    "publisher": {
-      "id": 7,
-      "name": "Rob Jr.",
-      "joined_date": "2015-07-06T11:22:37Z"
-    },
-    "languages": ["en", "es", "fr"],
-    "creation_date": "2019-08-05T12:12:44Z"
-  }
-]
+const { Search } = Input;
+const { confirm } = Modal;
+type Props = {};
 
 const Home: React.FC<Props> = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedNewspaper, setSelectedNewspaper] = useState<null | INewspaper>(null);
+  const [selectedNewspaper, setSelectedNewspaper] = useState<undefined | INewspaper>(undefined);
+  const { newspapers, totalDocs } = useSelector((state: IReducerStates) => state.newspapers);
+  const [paginationOptions, setPaginationOptions] = useState({ page: 1, size: 10 });
+  const [search, setSearch] = useState("");
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const serverParams = {
+      title: search,
+      ...paginationOptions
+    }
+    dispatch(fetchList(serverParams));
+  }, [dispatch, paginationOptions, search]);
 
   const viewNewspaper = (newspaper: INewspaper) => {
     setModalOpen(true);
     setSelectedNewspaper(newspaper);
   }
+
+  const createNewspaper = () => {
+    setSelectedNewspaper(undefined);
+    setEditModalOpen(true);
+  }
+
+  const editNewspaper = (newspaper: INewspaper) => {
+    setSelectedNewspaper(newspaper);
+    setEditModalOpen(true);
+  }
+
+  const showDeleteNewspaper = (newspaper: INewspaper) => {
+    confirm({
+      title: 'Confirm',
+      icon: <ExclamationCircleOutlined />,
+      content: 'Are you sure you want to delete this newspaper?',
+      okText: 'Delete',
+      cancelText: 'Cancel',
+      onOk() {
+        dispatch(deleteNewspaper(newspaper._id));
+      }
+    });
+  }
+
+  const handleChange = (page: number, size: number) => {
+    setPaginationOptions({page, size})
+  }
+
+  const onSearch = (value: string) => {
+    setSearch(value)
+  };
   const columns = [
     {
       title: 'Image',
       dataIndex: 'image',
       width: '5%',
+      render: (imageUrl: string) => (
+        imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%', height: '100%' }} /> : <div />
+      ),
     },
     {
       title: 'Title',
@@ -83,8 +118,8 @@ const Home: React.FC<Props> = () => {
           <Dropdown className="rotate-90 cursor-pointer" overlay={(
             <Menu>
               <Menu.Item key="view" onClick={() => viewNewspaper(newspaper)}>View Newspaper</Menu.Item>
-              <Menu.Item key="edit">Edit Newspaper</Menu.Item>
-              <Menu.Item key="delete">Delete Newspaper</Menu.Item>
+              <Menu.Item key="edit" onClick={() => editNewspaper(newspaper)}>Edit Newspaper</Menu.Item>
+              <Menu.Item key="delete" onClick={() => showDeleteNewspaper(newspaper)}>Delete Newspaper</Menu.Item>
             </Menu>
           )}>
             <DashOutlined />
@@ -99,13 +134,26 @@ const Home: React.FC<Props> = () => {
       <div className="home">
         <h1 className="title">Newspaper List</h1>
         <div className="header">
-          <Search className="search-input" placeholder="Search title" size="large" loading={false} />
-          <Button className="add-btn" type="primary" icon={<PlusOutlined />} shape="round" size="large">
+          <Search className="search-input" placeholder="Search title" size="large" loading={false} onSearch={onSearch} />
+          <Button className="add-btn" type="primary" icon={<PlusOutlined />} shape="round" size="large" onClick={createNewspaper}>
             Add Newspaper
           </Button>
         </div>
-        <Table className="newspaper-list" columns={columns} dataSource={data} rowKey={(record) => record.id} />
-
+        <Table
+          className="newspaper-list"
+          columns={columns}
+          dataSource={newspapers}
+          pagination={false}
+          rowKey={''}
+        />
+        <div className="pagination">
+          <Pagination
+            showSizeChanger={true}
+            defaultCurrent={paginationOptions.page}
+            total={totalDocs}
+            onChange={handleChange}
+          />
+        </div>
         {
           selectedNewspaper && (
             <NewspaperDetailModal
@@ -115,6 +163,13 @@ const Home: React.FC<Props> = () => {
             />
           )
         }
+        {editModalOpen && (
+          <NewspaperEditModal
+            newspaper={selectedNewspaper}
+            isOpen={editModalOpen}
+            onClose={() => setEditModalOpen(false)}
+          />
+        )}
       </div>
     </>
   );

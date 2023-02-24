@@ -1,5 +1,5 @@
 interface IPublisher {
-  id: number;
+  _id: string;
   name: string;
   joined_date: string;
 }
