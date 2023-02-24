@@ -12,9 +12,6 @@ const PublisherSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true
-    },
-    id: {
-      type: Number
     }
   },
   {

@@ -10,7 +10,7 @@ const validator = require('../validators/newspapers.validator')
 /**
  * Get Newspapers
  */
-router.get('/all', trimRequest.all, controller.getNewspapers)
+router.get('/', trimRequest.all, controller.getNewspapers)
 
 /**
  * Create newspaper
@@ -25,8 +25,8 @@ router.post(
 /**
  * Update newspaper
  */
-router.post(
-  '/id',
+router.patch(
+  '/:newspaperId',
   trimRequest.all,
   validator.updateNewspaper,
   controller.updateNewspaper
@@ -36,8 +36,10 @@ router.post(
  * Delete newspaper
  */
 router.delete(
-  '/id',
+  '/:newspaperId',
   trimRequest.all,
   validator.deleteNewspaper,
   controller.deleteNewspaper
 )
+
+module.exports = router

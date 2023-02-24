@@ -25,6 +25,7 @@ exports.createNewspaper = [
     .not()
     .isEmpty()
     .withMessage('IS_EMPTY'),
+  check('image').optional({ nullable: true }),
   check('publisherId')
     .exists()
     .withMessage('MISSING')
@@ -43,12 +44,13 @@ exports.createNewspaper = [
  * Validates update newspaper request
  */
 exports.updateNewspaper = [
-  check('id')
+  check('newspaperId')
     .exists()
     .withMessage('MISSING')
     .not()
     .isEmpty()
-    .withMessage('IS_EMPTY'),
+    .withMessage('IS_EMPTY')
+    .isMongoId(),
   check('title')
     .exists()
     .withMessage('MISSING')
@@ -57,6 +59,7 @@ exports.updateNewspaper = [
     .withMessage('IS_EMPTY')
     .isLength({ min: 3, max: 40 })
     .withMessage('WRONG_LENGTH'),
+  check('image').optional({ nullable: true }),
   check('link')
     .exists()
     .withMessage('MISSING')
@@ -87,7 +90,7 @@ exports.updateNewspaper = [
  * Validates update newspaper request
  */
 exports.deleteNewspaper = [
-  check('id')
+  check('newspaperId')
     .exists()
     .withMessage('MISSING')
     .not()

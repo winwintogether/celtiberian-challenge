@@ -1,13 +1,20 @@
 const model = require('../models/newspaper.model')
-const { checkQueryString, getAggregateItems } = require('../helpers/db')
-const { buildErrObject, itemNotFound, buildSuccObject } = require('../helpers/utils')
+const { getAggregateItems } = require('../helpers/db')
+const {
+  buildErrObject,
+  itemNotFound,
+  buildSuccObject
+} = require('../helpers/utils')
 
 /**
  * Gets items
  * @param {Object} req - request object
  */
 const getNewspapers = async req => {
-  const searchQuery = await checkQueryString(req.query)
+  const searchQuery = {}
+  if (req.query && req.query.title) {
+    searchQuery.title = { $regex: new RegExp(req.query.title, 'i') }
+  }
   const aggregateQuery = model.aggregate([{ $match: searchQuery }])
   return await getAggregateItems(req, model, aggregateQuery)
 }
@@ -24,7 +31,7 @@ const createNewspaper = async req => {
       abstract: req.abstract,
       languages: req.languages,
       publisherId: req.publisherId,
-      id: req.id
+      image: req.image
     })
     newspaper.save((err, item) => {
       if (err) {
@@ -38,11 +45,12 @@ const createNewspaper = async req => {
 /**
  * Updates newspaper
  * @param {Object} req - request object
+ * @param {String} id - request object
  */
-const updateNewspaper = async req => {
+const updateNewspaper = async (req, id) => {
   return new Promise((resolve, reject) => {
-    model.findOneAndUpdate(
-      { id: req.id },
+    model.findByIdAndUpdate(
+      id,
       req,
       {
         new: true,
@@ -62,7 +70,7 @@ const updateNewspaper = async req => {
  */
 const deleteNewspaper = async id => {
   return new Promise((resolve, reject) => {
-    model.deleteOne({ id }, (err, res) => {
+    model.deleteOne({ _id: id }, (err, res) => {
       itemNotFound(err, res, reject, 'NEWSPAPER_NOT_DELETED')
       resolve(buildSuccObject('NEWSPAPER_DELETED'))
     })

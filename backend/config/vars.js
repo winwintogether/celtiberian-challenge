@@ -45,7 +45,7 @@ const sockets = new Map()
 
 module.exports = {
   env: process.env.NODE_ENV,
-  port: process.env.PORT || 3000, // Setup express server port from ENV, default: 3000
+  port: process.env.PORT || 8080,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpiration: process.env.JWT_EXPIRATION_IN_MINUTES,
   mongoUri:

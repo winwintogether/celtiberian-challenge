@@ -1,6 +1,7 @@
 const { matchedData } = require('express-validator')
 const newspaperService = require('../services/newspapers.service')
 const { handleError, buildSuccObject } = require('../helpers/utils')
+const { processPaginationNews } = require('../modules/newspaper.module')
 
 /**
  * Gets Newspapers
@@ -9,7 +10,9 @@ const { handleError, buildSuccObject } = require('../helpers/utils')
  */
 exports.getNewspapers = async (req, res) => {
   try {
-    res.status(200).json(await newspaperService.getNewspapers(req))
+    const paginationNews = await newspaperService.getNewspapers(req)
+    paginationNews.docs = await processPaginationNews(paginationNews.docs)
+    res.status(200).json(paginationNews)
   } catch (error) {
     handleError(res, error)
   }
@@ -23,9 +26,6 @@ exports.getNewspapers = async (req, res) => {
 exports.createNewspaper = async (req, res) => {
   try {
     req = matchedData(req)
-
-    const count = await newspaperService.getNewspaperCount()
-    req.id = count ? count + 1 : 1
 
     const newspaper = await newspaperService.createNewspaper(req)
     res.status(201).json(newspaper)
@@ -41,8 +41,9 @@ exports.createNewspaper = async (req, res) => {
  */
 exports.updateNewspaper = async (req, res) => {
   try {
+    const id = req.params.newspaperId
     req = matchedData(req)
-    const newspaper = await newspaperService.updateNewspaper(req)
+    const newspaper = await newspaperService.updateNewspaper(req, id)
     res.status(200).json(newspaper)
   } catch (error) {
     handleError(res, error)
@@ -57,9 +58,8 @@ exports.updateNewspaper = async (req, res) => {
 exports.deleteNewspaper = async (req, res) => {
   try {
     req = matchedData(req)
-    const id = req.companyId
     // delete company
-    await newspaperService.deleteNewspaper(id)
+    await newspaperService.deleteNewspaper(req.newspaperId)
     res.status(200).json(buildSuccObject('NEWSPAPER_DELETED'))
   } catch (error) {
     handleError(res, error)

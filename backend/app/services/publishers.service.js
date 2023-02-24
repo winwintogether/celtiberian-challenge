@@ -1,5 +1,5 @@
 const model = require('../models/publisher.model')
-const { buildErrObject } = require('../helpers/utils')
+const { buildErrObject, itemNotFound } = require('../helpers/utils')
 
 const getPublishers = async () => {
   return new Promise((resolve, reject) => {
@@ -21,6 +21,19 @@ const getPublishers = async () => {
   })
 }
 
+/**
+ * Finds publishers
+ */
+const findPublishersByIds = async ids => {
+  return new Promise((resolve, reject) => {
+    model.find({ _id: { $in: ids } }, (err, publishers) => {
+      itemNotFound(err, publishers, reject, 'PUBLISHERS_NOT_FOUND')
+      resolve(publishers)
+    })
+  })
+}
+
 module.exports = {
-  getPublishers
+  getPublishers,
+  findPublishersByIds
 }

@@ -9,4 +9,6 @@ const controller = require('../controllers/publishers.ctrl')
 /**
  * Get Newspapers
  */
-router.get('/all', trimRequest.all, controller.getPublishers)
+router.get('/', trimRequest.all, controller.getPublishers)
+
+module.exports = router

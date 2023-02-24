@@ -13,15 +13,15 @@ const NewspaperSchema = new mongoose.Schema(
       unique: true,
       trim: true
     },
-    id: {
-      type: Number
-    },
     isPaymentCompany: {
       type: Boolean,
       default: false,
       index: true
     },
     link: {
+      type: String
+    },
+    image: {
       type: String
     },
     languages: {
@@ -31,7 +31,8 @@ const NewspaperSchema = new mongoose.Schema(
       type: String
     },
     publisherId: {
-      type: Number
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Publisher'
     }
   },
   {

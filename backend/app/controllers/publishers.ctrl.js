@@ -1,5 +1,6 @@
 const newspaperService = require('../services/newspapers.service')
 const { handleError } = require('../helpers/utils')
+const { getPublishers } = require('../services/publishers.service')
 
 /**
  * Gets Newspapers
@@ -8,7 +9,7 @@ const { handleError } = require('../helpers/utils')
  */
 exports.getPublishers = async (req, res) => {
   try {
-    res.status(200).json(await newspaperService.getNewspapers(req))
+    res.status(200).json(await getPublishers(req))
   } catch (error) {
     handleError(res, error)
   }

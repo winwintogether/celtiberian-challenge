@@ -1,7 +1,11 @@
 const express = require('express')
 const router = express.Router()
 
-router.use('/newspaper', require('./newspaper'))
+router.use('/newspapers', require('./newspaper.router'))
+
+router.use('/publishers', require('./publisher.router'))
+
+router.use('/upload', require('./_uploads.router'))
 
 /**
  * Handle 404 error

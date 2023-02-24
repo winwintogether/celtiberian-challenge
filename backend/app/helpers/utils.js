@@ -2,7 +2,6 @@ const i18n = require('i18n')
 const requestIp = require('request-ip')
 const { validationResult } = require('express-validator')
 const validator = require('validator')
-const moment = require('moment-timezone')
 const status = require('statuses')
 const { env } = require('../../config/vars')
 
@@ -58,59 +57,6 @@ exports.handleError = (res, err) => {
     res.status(500).json({
       errors: {
         msg: err.message
-      }
-    })
-  }
-}
-
-exports.handlePDFResponse = (res, data, fileName) => {
-  if (data && fileName) {
-    res
-      .writeHead(200, {
-        'Content-Type': 'application/pdf',
-        'Content-disposition': `attachment;filename=${fileName}.pdf`,
-        'Content-Length': Buffer.byteLength(data)
-      })
-      .end(data)
-  } else {
-    res.status(500).json({
-      errors: {
-        msg: 'Invalid PDF content'
-      }
-    })
-  }
-}
-
-exports.handleExcelResponse = (res, data) => {
-  if (data) {
-    res
-      .writeHead(200, {
-        'Content-Type':
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
-        'Content-Length': Buffer.byteLength(data)
-      })
-      .end(data)
-  } else {
-    res.status(500).json({
-      errors: {
-        msg: 'Invalid XLSX content'
-      }
-    })
-  }
-}
-
-exports.handleHtmlResponse = (res, data) => {
-  if (data && typeof data === 'string') {
-    res
-      .writeHead(200, {
-        'Content-Type': 'text/html',
-        'Content-Length': data.length
-      })
-      .end(data)
-  } else {
-    res.status(500).json({
-      errors: {
-        msg: 'Invalid html content'
       }
     })
   }
@@ -222,188 +168,10 @@ exports.itemAlreadyExists = (err, item, reject, message) => {
   }
 }
 
-exports.convertDayString = string => {
-  if (string) {
-    return moment(new Date(string)).format('dddd')
-  }
-  return ''
-}
-
-exports.toNLDateString = string => {
-  if (string) {
-    return moment.tz(new Date(string), 'Europe/Amsterdam').format('DD-MM-YYYY')
-  }
-  return ''
-}
-
-exports.toNLDateTimeString = string => {
-  if (string) {
-    return moment
-      .tz(new Date(string), 'Europe/Amsterdam')
-      .format('DD-MM-YYYY HH:mm:ss')
-  }
-  return ''
-}
-
-const toStandardDateString = string => {
-  if (string) {
-    return moment.tz(new Date(string), 'Europe/Amsterdam').format('YYYY-MM-DD')
-  }
-  return ''
-}
-
-exports.toStandardDateString = toStandardDateString
-
-exports.convertDecimalNumber = (number, decimals = 2) => {
-  if (number) {
-    return Number(Number(number).toFixed(decimals))
-  }
-  return 0
-}
-
-exports.getWeekNumber = d => {
-  d = new Date(d)
-  // Copy date so don't modify original
-  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
-  // Set to nearest Thursday: current date + 4 - current day number
-  // Make Sunday's day number 7
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7))
-  // Get first day of year
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
-  // Calculate full weeks to nearest Thursday
-  // Return array of year and week number
-  return Math.ceil(((d - yearStart) / 86400000 + 1) / 7)
-}
-
-exports.getDurationDate = ({
-  date,
-  duration = 0,
-  type = 'days',
-  mode = 'add'
-}) => {
-  if (mode === 'add') {
-    return date ? moment(new Date(date)).add(duration, type) : ''
-  }
-  return date ? moment(new Date(date)).subtract(duration, type) : ''
-}
-
-exports.honorificFullNameFormatter = (title, fullName) => {
-  if (!title) {
-    return fullName
-  }
-  return `${title} ${fullName}`
-}
-
-exports.fullNameFormatter = data => {
-  let fullName = ''
-  if (data && data.fullName) {
-    return data.fullName
-  }
-  if (data && data.firstName) {
-    fullName = data.firstName
-  }
-  if (data && data.middleName) {
-    fullName += ` ${data.middleName}`
-  }
-  if (data && data.lastName) {
-    fullName += ` ${data.lastName}`
-  }
-  return fullName
-}
-
-exports.fullAddressFormatter = data => {
-  let fullAddress = ''
-  if (data && data.street) {
-    fullAddress = data.street
-  }
-  if (data && data.houseNumber) {
-    fullAddress += ` ${data.houseNumber}`
-  }
-  if (data && data.houseNumberAddition) {
-    fullAddress += ` ${data.houseNumberAddition}`
-  }
-  return fullAddress
-}
-
-exports.termOfPaymentFormatter = term => {
-  if (term) {
-    term = term.replace('_days', ' dagen')
-    term = term.replace('_weeks', ' weken')
-    term = term.replace('_months', ' maanden')
-    return term
-  }
-  return ''
-}
-
-exports.socialSecurityNumberFormatter = number => {
-  if (number) {
-    return number.slice(-3)
-  }
-  return ''
-}
 exports.removeImageCropInfo = imageUrl => {
   const segments = imageUrl.split('?')
   return segments[0]
 }
-
-const fullCompare = (baseKey, A, B) => {
-  const result = {
-    before: {},
-    after: {}
-  }
-
-  if (
-    B === undefined ||
-    B === null ||
-    baseKey === 'uploadedAt' ||
-    baseKey === 'createdAt'
-  ) {
-    return result
-  }
-
-  if (Array.isArray(A)) {
-    const isStringArray = A.every(item => typeof item === 'string')
-    if (!isStringArray) {
-      return result
-    }
-    const aStr = A.sort().join(', ')
-    const bStr = B.sort().join(', ')
-    if (aStr !== bStr) {
-      result.after[baseKey] = A.join(', ')
-      result.before[baseKey] = B.join(', ')
-    }
-    return result
-  }
-
-  if (A instanceof Date || B instanceof Date) {
-    if (new Date(A).toDateString() !== B.toDateString()) {
-      result.after[baseKey] = new Date(A)
-      result.before[baseKey] = B
-    }
-    return result
-  }
-  if (typeof A === 'object') {
-    for (const key in A) {
-      const { before, after } = fullCompare(
-        baseKey ? `${baseKey}:${key}` : key,
-        A[key],
-        B ? B[key] : undefined
-      )
-      Object.assign(result.before, before)
-      Object.assign(result.after, after)
-    }
-    return result
-  }
-
-  if (String(A) !== String(B)) {
-    result.after[baseKey] = A
-    result.before[baseKey] = B
-  }
-
-  return result
-}
-
-exports.fullCompare = fullCompare
 
 /**
  *
@@ -418,41 +186,4 @@ exports.consoleLogWrapper = (success, msg) => {
   }
   console.log(`>>>> ${msg}`)
   console.log('************************************************')
-}
-
-exports.getTimeSheetYear = timesheet => {
-  if (timesheet.data && timesheet.data.length > 0) {
-    return new Date(timesheet.data[0].date).getFullYear().toString()
-  }
-
-  return null
-}
-
-exports.checkEmails = value => {
-  const invalidEmail = value.find(email => !validator.isEmail(email))
-  return !invalidEmail
-}
-exports.compareDate = (aDate, bDate) => {
-  aDate = aDate || Infinity
-  bDate = bDate || Infinity
-  if (toStandardDateString(aDate) < toStandardDateString(bDate)) {
-    return -1
-  } else if (toStandardDateString(aDate) > toStandardDateString(bDate)) {
-    return 1
-  }
-  return 0
-}
-
-exports.convertExcelDateFormat = string => {
-  if (string) {
-    return new Date(string)
-  }
-  return null
-}
-
-exports.convertStatus = item => {
-  if (item) {
-    return i18n.__(`status.${item}`)
-  }
-  return ''
 }
