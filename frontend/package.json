@@ -28,11 +28,14 @@
     "@types/react-router": "^5.0.3",
     "@types/react-router-dom": "^4.3.5",
     "@types/redux": "^3.6.0",
-    "antd": "4.16.1",
+    "antd": "^5.2.2",
+    "antd-img-crop": "^4.7.0",
     "axios": "^0.18.0",
     "connected-react-router": "^6.5.2",
     "history": "^4.9.0",
     "i18next": "^15.0.6",
+    "moment": "^2.29.4",
+    "rc-util": "^5.28.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-i18next": "^10.3.1",
@@ -42,7 +45,7 @@
     "redux": "^4.0.5",
     "redux-saga": "^1.0.2",
     "redux-thunk": "^2.3.0",
-    "typescript": "3.8.3"
+    "typescript": "^4.9.5"
   },
   "devDependencies": {
     "babel-plugin-import": "^1.11.0",
