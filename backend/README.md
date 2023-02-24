@@ -4,10 +4,29 @@
 - Node.js > 8.12
 - MongoDB
 
+### Installation
+
+-   make environment
+```
+$ cp .env.example .env
+```
+-   install packages
+```
+$ npm install
+```
 
 ### Run Project
 
-$ npm run dev:window
+- seed initial Data
+```
+$ npm run fresh         // windows
+```
+
+- dev development
+
+```
+$ npm run dev:window         // windows
+```
 
 ### Testing Project
 ```
